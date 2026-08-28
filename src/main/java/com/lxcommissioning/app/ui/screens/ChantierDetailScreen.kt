@@ -16,17 +16,27 @@ import com.lxcommissioning.app.ui.viewmodels.ChantierViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChantierDetailScreen(
-    chantier: Chantier,
+    chantierId: String,
     onBackClick: () -> Unit,
     viewModel: ChantierViewModel = hiltViewModel()
 ) {
-    val notes by viewModel.getNotes(chantier.id).collectAsState(emptyList())
+    val chantier by viewModel.getChantier(chantierId).collectAsState(null)
+    val notes by viewModel.getNotes(chantierId).collectAsState(emptyList())
     var noteText by remember { mutableStateOf("") }
+
+    if (chantier == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+    
+    val currentChantier = chantier!!
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(chantier.name) },
+                title = { Text(currentChantier.name) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.Default.ArrowBack, "Back")
@@ -42,9 +52,9 @@ fun ChantierDetailScreen(
                 .padding(16.dp)
         ) {
             item {
-                Text("Adresse: ${chantier.address}", style = MaterialTheme.typography.bodyLarge)
-                Text("Client: ${chantier.client}", style = MaterialTheme.typography.bodyLarge)
-                Text("Status: ${chantier.status}", style = MaterialTheme.typography.bodyLarge)
+                Text("Adresse: ${currentChantier.address}", style = MaterialTheme.typography.bodyLarge)
+                Text("Client: ${currentChantier.client}", style = MaterialTheme.typography.bodyLarge)
+                Text("Status: ${currentChantier.status}", style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -61,7 +71,7 @@ fun ChantierDetailScreen(
                 Button(
                     onClick = {
                         if (noteText.isNotBlank()) {
-                            viewModel.addNote(chantier.id, noteText, "Technicien LX")
+                            viewModel.addNote(currentChantier.id, noteText, "Technicien LX")
                             noteText = ""
                         }
                     },

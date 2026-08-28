@@ -1,12 +1,14 @@
 package com.lxcommissioning.app;
 
 import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
+import com.lxcommissioning.app.di.AppModule;
 import com.lxcommissioning.app.di.DatabaseModule;
 import com.lxcommissioning.app.di.NetworkModule;
 import com.lxcommissioning.app.di.SecurityModule;
 import com.lxcommissioning.app.receiver.GeofenceBroadcastReceiver_GeneratedInjector;
 import com.lxcommissioning.app.ui.viewmodels.AuthViewModel_HiltModules;
 import com.lxcommissioning.app.ui.viewmodels.ChantierViewModel_HiltModules;
+import com.lxcommissioning.app.ui.viewmodels.PointageViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -131,6 +133,7 @@ public final class LXApplication_HiltComponents {
 
   @Component(
       modules = {
+          AppModule.class,
           ApplicationContextModule.class,
           DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
@@ -167,7 +170,8 @@ public final class LXApplication_HiltComponents {
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           ActivityCBuilderModule.class,
-          ViewModelCBuilderModule.class
+          ViewModelCBuilderModule.class,
+          PointageViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -205,7 +209,8 @@ public final class LXApplication_HiltComponents {
       modules = {
           AuthViewModel_HiltModules.BindsModule.class,
           ChantierViewModel_HiltModules.BindsModule.class,
-          HiltWrapper_HiltViewModelFactory_ViewModelModule.class
+          HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          PointageViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

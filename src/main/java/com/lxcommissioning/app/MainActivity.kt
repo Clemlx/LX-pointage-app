@@ -98,7 +98,7 @@ fun MainApp() {
                     arguments = listOf(navArgument("id") { type = NavType.StringType })
                 ) { backStackEntry ->
                     val id = backStackEntry.arguments?.getString("id") ?: ""
-                    ChantierDetailScreen(id, chantierViewModel, onBack = { navController.popBackStack() })
+                    ChantierDetailScreen(chantierId = id, onBackClick = { navController.popBackStack() }, viewModel = chantierViewModel)
                 }
                 composable("history") { /* HistoriqueScreen */ }
                 composable("settings") { SettingsScreen(authViewModel, onLogout = {}) }

@@ -13,6 +13,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+import com.lxcommissioning.app.data.repository.PhotoRepository
+import com.lxcommissioning.app.data.repository.NoteRepository
+import com.lxcommissioning.app.data.remote.ApiService
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -41,7 +45,19 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providePointageRepository(database: AppDatabase): PointageRepository {
-        return PointageRepository(database.pointageDao())
+    fun providePointageRepository(database: AppDatabase, apiService: ApiService): PointageRepository {
+        return PointageRepository(database.pointageDao(), apiService)
+    }
+
+    @Singleton
+    @Provides
+    fun providePhotoRepository(database: AppDatabase): PhotoRepository {
+        return PhotoRepository(database.photoDao())
+    }
+
+    @Singleton
+    @Provides
+    fun provideNoteRepository(database: AppDatabase): NoteRepository {
+        return NoteRepository(database.noteDao())
     }
 }

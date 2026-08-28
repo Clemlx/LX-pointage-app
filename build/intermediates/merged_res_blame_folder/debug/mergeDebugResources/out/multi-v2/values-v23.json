@@ -4,7 +4,7 @@
             "outputFile": "com.lxcommissioning.app-mergeDebugResources-77:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Clement\\.gradle\\caches\\8.10.2\\transforms\\49a47569b12e8c8e0dda8b9300f15515\\transformed\\appcompat-1.6.1\\res\\values-v23\\values-v23.xml",
+                    "source": "C:\\Users\\Clement\\.gradle\\caches\\8.10.2\\transforms\\2163ad4bae17094d08efd97c85436349\\transformed\\appcompat-1.6.1\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Clement\\.gradle\\caches\\8.10.2\\transforms\\ec2dbb26a84374e33af919206b8aa030\\transformed\\work-runtime-2.9.1\\res\\values-v23\\values-v23.xml",
+                    "source": "C:\\Users\\Clement\\.gradle\\caches\\8.10.2\\transforms\\2c4b7b0c07b933f03cab1b3b35f01277\\transformed\\work-runtime-2.9.1\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
