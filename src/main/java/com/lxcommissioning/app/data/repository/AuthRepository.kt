@@ -1,35 +1,41 @@
 package com.lxcommissioning.app.data.repository
 
+import android.content.Context
 import android.content.SharedPreferences
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 
-@Singleton
-class AuthRepository @Inject constructor(
-    private val sharedPreferences: SharedPreferences
-) {
-    companion object {
-        private const val KEY_AUTH_TOKEN = "auth_token"
-        private const val KEY_USER_LOGIN = "user_login"
-    }
+class AuthRepository(context: Context) {
+    private val masterKey = MasterKey.Builder(context)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build()
+
+    private val encryptedSharedPreferences: SharedPreferences =
+        EncryptedSharedPreferences.create(
+            context,
+            "secret_shared_prefs",
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
 
     fun saveAuthToken(token: String) {
-        sharedPreferences.edit().putString(KEY_AUTH_TOKEN, token).apply()
+        encryptedSharedPreferences.edit().putString("auth_token", token).apply()
     }
 
     fun getAuthToken(): String? {
-        return sharedPreferences.getString(KEY_AUTH_TOKEN, null)
+        return encryptedSharedPreferences.getString("auth_token", null)
     }
 
-    fun saveLogin(login: String) {
-        sharedPreferences.edit().putString(KEY_USER_LOGIN, login).apply()
+    fun saveLogin(email: String) {
+        encryptedSharedPreferences.edit().putString("last_login", email).apply()
     }
 
     fun getLogin(): String? {
-        return sharedPreferences.getString(KEY_USER_LOGIN, null)
+        return encryptedSharedPreferences.getString("last_login", null)
     }
 
     fun clearAuth() {
-        sharedPreferences.edit().clear().apply()
+        encryptedSharedPreferences.edit().clear().apply()
     }
 }

@@ -1,104 +1,95 @@
 package com.lxcommissioning.app.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lxcommissioning.app.ui.viewmodels.ChantierViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.lxcommissioning.app.data.models.Chantier
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.lxcommissioning.app.ui.viewmodels.ChantierViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChantierDetailScreen(
-    chantierId: String,
-    viewModel: ChantierViewModel,
-    onBack: () -> Unit
+    chantier: Chantier,
+    onBackClick: () -> Unit,
+    viewModel: ChantierViewModel = hiltViewModel()
 ) {
-    val chantier by viewModel.getChantier(chantierId).collectAsState()
-    var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Infos", "Temps", "Géo", "Photos", "Notes", "Habs")
+    val notes by viewModel.getNotes(chantier.id).collectAsState(emptyList())
+    var noteText by remember { mutableStateOf("") }
 
-    chantier?.let { c ->
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(c.name) },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* Modifier */ }) { Icon(Icons.Default.Edit, contentDescription = null) }
-                        IconButton(onClick = { /* Export PDF */ }) { Icon(Icons.Default.PictureAsPdf, contentDescription = null) }
-                    }
-                )
-            }
-        ) { padding ->
-            Column(modifier = Modifier.padding(padding)) {
-                ScrollableTabRow(selectedTabIndex = selectedTab) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = { Text(title) }
-                        )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(chantier.name) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 }
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            item {
+                Text("Adresse: ${chantier.address}", style = MaterialTheme.typography.bodyLarge)
+                Text("Client: ${chantier.client}", style = MaterialTheme.typography.bodyLarge)
+                Text("Status: ${chantier.status}", style = MaterialTheme.typography.bodyLarge)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-                when (selectedTab) {
-                    0 -> InfoTab(c)
-                    1 -> TempsTab(c, viewModel)
-                    2 -> GeoTab(c, viewModel)
-                    3 -> PhotosTab(c, viewModel)
-                    4 -> NotesTab(c, viewModel)
-                    5 -> HabsTab(c, viewModel)
+            item {
+                Text("Ajouter une note:", style = MaterialTheme.typography.titleMedium)
+                TextField(
+                    value = noteText,
+                    onValueChange = { noteText = it },
+                    label = { Text("Note") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                )
+                Button(
+                    onClick = {
+                        if (noteText.isNotBlank()) {
+                            viewModel.addNote(chantier.id, noteText, "Technicien LX")
+                            noteText = ""
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Ajouter")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            item {
+                Text("Notes (${notes.size}):", style = MaterialTheme.typography.titleMedium)
+            }
+
+            items(notes) { note ->
+                Card(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(note.content, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            note.author ?: "Unknown",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-@Composable
-fun InfoTab(chantier: Chantier) {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE)
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Client: ${chantier.client}", style = MaterialTheme.typography.titleMedium)
-        Text("Adresse: ${chantier.address}")
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Description: ${chantier.description}")
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Créé le: ${dateFormat.format(chantier.createdAt)}")
-    }
-}
-
-@Composable
-fun TempsTab(chantier: Chantier, viewModel: ChantierViewModel) {
-    Text("Tableau des pointages...", modifier = Modifier.padding(16.dp))
-}
-
-@Composable
-fun GeoTab(chantier: Chantier, viewModel: ChantierViewModel) {
-    Text("Carte des zones GPS...", modifier = Modifier.padding(16.dp))
-}
-
-@Composable
-fun PhotosTab(chantier: Chantier, viewModel: ChantierViewModel) {
-    Text("Galerie photos...", modifier = Modifier.padding(16.dp))
-}
-
-@Composable
-fun NotesTab(chantier: Chantier, viewModel: ChantierViewModel) {
-    Text("Timeline des notes...", modifier = Modifier.padding(16.dp))
-}
-
-@Composable
-fun HabsTab(chantier: Chantier, viewModel: ChantierViewModel) {
-    Text("Liste des habilitations...", modifier = Modifier.padding(16.dp))
 }
